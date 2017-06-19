@@ -7,7 +7,6 @@ import io.prometheus.client.Summary;
 import io.prometheus.client.exporter.common.TextFormat;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.ESLoggerFactory;
-import org.elasticsearch.rest.prometheus.RestPrometheusMetricsAction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -15,7 +14,7 @@ import java.io.Writer;
 import java.util.HashMap;
 
 public class PrometheusMetricsCatalog {
-    private final static Logger logger = ESLoggerFactory.getLogger(RestPrometheusMetricsAction.class.getSimpleName());
+    private final static Logger logger = ESLoggerFactory.getLogger(PrometheusMetricsCatalog.class.getSimpleName());
 
     private String cluster;
     private String metric_prefix;
@@ -85,7 +84,7 @@ public class PrometheusMetricsCatalog {
         if (increment >= 0) {
             counter.labels(extended_label_values).inc(increment);
         } else {
-            logger.error(String.format("Can not increment metric %s with value %f, skipping", metric, increment));
+            logger.debug(String.format("Can not increment metric %s with value %f, skipping", metric, increment));
         }
     }
 
@@ -104,15 +103,5 @@ public class PrometheusMetricsCatalog {
     public Summary.Timer startSummaryTimer(String metric, String... label_values) {
         Summary summary = (Summary) metrics.get(metric);
         return summary.labels(getExtendedLabelValues(label_values)).startTimer();
-    }
-
-    public String toTextFormat() throws IOException {
-        try {
-            Writer writer = new StringWriter();
-            TextFormat.write004(writer, registry.metricFamilySamples());
-            return writer.toString();
-        } catch (IOException e) {
-            throw e;
-        }
     }
 }
