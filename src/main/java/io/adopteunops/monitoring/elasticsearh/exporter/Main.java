@@ -25,13 +25,12 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     @Parameter(names = "--elasticsearch-hosts", description = "Elasticsearch hostnames", required = true)
@@ -44,6 +43,10 @@ public class Main {
     public String username;
     @Parameter(names = "--elasticsearch-password", required = true)
     public String password;
+    @Parameter(names = "--scrape-period", description = "Scrape period")
+    public int scrapePeriod = 30;
+    @Parameter(names = "--scrape-period-unit", description = "Scrape period timeunit")
+    public TimeUnit scrapePeriodUnit = TimeUnit.SECONDS;
     @Parameter(names = "--port", description = "Exporter port")
     public int port = 7979;
     @Parameter(names = "--help", help = true)
@@ -67,16 +70,16 @@ public class Main {
             for (String elasticsearchHostname : main.elasticsearchHostnames) {
                 client = client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHostname), main.elasticsearchPort));
             }
-            PrometheusMetricsCollector collector = new PrometheusMetricsCollector(Settings.EMPTY, client);
-            MetricsServlet metricsServlet = new MetricsServlet() {
-                @Override
-                protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                    collector.updateMetrics();
-                    super.doGet(req, resp);
-                }
-            };
 
-            ExposePrometheusMetricsServer prometheusMetricServlet = new ExposePrometheusMetricsServer(main.port, metricsServlet);
+            PrometheusMetricsCollector collector = new PrometheusMetricsCollector(Settings.EMPTY, client);
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    collector.updateMetrics();
+                }
+            }, 0, main.scrapePeriodUnit.toMillis(main.scrapePeriod));
+
+            ExposePrometheusMetricsServer prometheusMetricServlet = new ExposePrometheusMetricsServer(main.port, new MetricsServlet());
             prometheusMetricServlet.start();
 
         }
