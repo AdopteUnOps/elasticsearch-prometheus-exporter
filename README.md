@@ -1,5 +1,7 @@
 # Prometheus Exporter Plugin for ElasticSearch
 
+This is a https://github.com/vvanholl/elasticsearch-prometheus-exporter fork
+
 This is a builtin exporter from ElasticSearch to Prometheus.
 It collects all relevant metrics and make them available to Prometheus via ElasticSearch REST API.
 
