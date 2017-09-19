@@ -15,9 +15,11 @@ package io.adopteunops.monitoring.elasticsearh.exporter;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import io.adopteunops.monitoring.prometheus.ExposePrometheusMetricsServer;
 import io.prometheus.client.exporter.MetricsServlet;
 import org.compuscene.metrics.prometheus.PrometheusMetricsCollector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -58,7 +60,9 @@ public class Main {
         } else {
             Settings.Builder settingsBuilder = Settings.builder();
             settingsBuilder.put("cluster.name", main.clusterName);
-//            settingsBuilder.put("xpack.security.user", main.username + ":" + main.password);
+            if (main.username != null && main.username.trim().length() > 0) {
+                settingsBuilder.put("xpack.security.user", main.username + ":" + main.password);
+            }
             TransportClient client = new PreBuiltTransportClient(settingsBuilder.build());
             for (String elasticsearchHostname : main.elasticsearchHostnames) {
                 client = client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHostname), main.elasticsearchPort));
@@ -78,5 +82,28 @@ public class Main {
         }
     }
 
+    static class ExposePrometheusMetricsServer implements AutoCloseable {
 
+        private final Server server;
+
+        public ExposePrometheusMetricsServer(int port, MetricsServlet metricsServlet) {
+            this.server = new Server(port);
+            ServletContextHandler context = new ServletContextHandler();
+            context.setContextPath("/");
+            server.setHandler(context);
+            context.addServlet(new ServletHolder(metricsServlet), "/metrics");
+        }
+
+        public void start() {
+            try {
+                server.start();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void close() throws Exception {
+        }
+    }
 }
