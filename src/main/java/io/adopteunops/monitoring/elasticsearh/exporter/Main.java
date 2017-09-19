@@ -44,9 +44,9 @@ public class Main {
     @Parameter(names = "--elasticsearch-password", required = true)
     public String password;
     @Parameter(names = "--scrape-period", description = "Scrape period")
-    public int scrapePeriod = 30;
+    public int scrapePeriod = 1;
     @Parameter(names = "--scrape-period-unit", description = "Scrape period timeunit")
-    public TimeUnit scrapePeriodUnit = TimeUnit.SECONDS;
+    public TimeUnit scrapePeriodUnit = TimeUnit.MINUTES;
     @Parameter(names = "--port", description = "Exporter port")
     public int port = 7979;
     @Parameter(names = "--help", help = true)
@@ -79,8 +79,7 @@ public class Main {
                 }
             }, 0, main.scrapePeriodUnit.toMillis(main.scrapePeriod));
 
-            ExposePrometheusMetricsServer prometheusMetricServlet = new ExposePrometheusMetricsServer(main.port, new MetricsServlet());
-            prometheusMetricServlet.start();
+            new ExposePrometheusMetricsServer(main.port, new MetricsServlet()).start();
 
         }
     }
