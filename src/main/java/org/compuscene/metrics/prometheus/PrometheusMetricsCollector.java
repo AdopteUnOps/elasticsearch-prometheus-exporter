@@ -34,16 +34,12 @@ import java.util.List;
 import java.util.Map;
 
 public class PrometheusMetricsCollector {
-    public static final Setting<Boolean> PROMETHEUS_INDICES = Setting.boolSetting("prometheus.indices", true, Property.NodeScope);
-
+    private final static Setting<Boolean> PROMETHEUS_INDICES = Setting.boolSetting("prometheus.indices", true, Property.NodeScope);
     private final static Logger logger = ESLoggerFactory.getLogger(PrometheusMetricsCollector.class.getSimpleName());
 
     private final Settings settings;
     private final Client client;
-
-    private String cluster;
-
-    private PrometheusMetricsCatalog catalog;
+    private final PrometheusMetricsCatalog catalog;
 
     public PrometheusMetricsCollector(Settings settings, final Client client) {
         this.settings = settings;
@@ -52,7 +48,7 @@ public class PrometheusMetricsCollector {
         NodesStatsRequest nodesStatsRequest = new NodesStatsRequest().all();
         NodesStatsResponse nodesStatsResponse = this.client.admin().cluster().nodesStats(nodesStatsRequest).actionGet();
 
-        cluster = nodesStatsResponse.getClusterName().value();
+        String cluster = nodesStatsResponse.getClusterName().value();
         catalog = new PrometheusMetricsCatalog(cluster, "es_");
 
         registerMetrics();
@@ -72,7 +68,9 @@ public class PrometheusMetricsCollector {
         registerCircuitBreakerMetrics();
         registerThreadPoolMetrics();
         registerFsMetrics();
-        if (PROMETHEUS_INDICES.get(settings)) registerPerIndexMetrics();
+        if (PROMETHEUS_INDICES.get(settings)) {
+            registerPerIndexMetrics();
+        }
     }
 
     private void registerClusterMetrics() {
@@ -813,9 +811,5 @@ public class PrometheusMetricsCollector {
         updateCircuitBreakersMetrics(nodeStats.getBreaker(), node);
         updateThreadPoolMetrics(nodeStats.getThreadPool(), node);
         updateFsMetrics(nodeStats.getFs(), node);
-    }
-
-    public PrometheusMetricsCatalog getCatalog() {
-        return catalog;
     }
 }
