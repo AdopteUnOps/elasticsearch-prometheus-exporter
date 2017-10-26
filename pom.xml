@@ -180,6 +180,29 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+              <groupId>com.spotify</groupId>
+              <artifactId>docker-maven-plugin</artifactId>
+              <version>1.0.0</version>
+              <configuration>
+                <imageName>adopteunops/elasticsearch-prometheus-exporter</imageName>
+                <imageTags>
+                   <imageTag>${project.version}</imageTag>
+                   <imageTag>latest</imageTag>
+                </imageTags>
+                <baseImage>java:8u111-jdk</baseImage>
+                <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                <!-- copy the service's jar file from target into the root directory of the image -->
+                <resources>
+                   <resource>
+                     <targetPath>/</targetPath>
+                     <directory>${project.build.directory}</directory>
+                     <include>${project.build.finalName}.jar</include>
+                   </resource>
+                </resources>
+              </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
