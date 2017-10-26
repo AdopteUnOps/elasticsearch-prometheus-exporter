@@ -18,7 +18,6 @@ branches:
     - master
 
 after_success:
-  - echo $DOCKER_USERNAME && echo $TRAVIS_SECURE_ENV_VARS
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - mvn docker:build
-  - mvn docker:push
+  - mvn dockerfile:build
+  - mvn dockerfile:push
