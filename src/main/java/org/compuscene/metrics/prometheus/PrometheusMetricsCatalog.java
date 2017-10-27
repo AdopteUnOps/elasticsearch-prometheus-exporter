@@ -19,7 +19,7 @@ public class PrometheusMetricsCatalog {
         this.cluster = cluster;
         this.metric_prefix = metric_prefix;
         metrics = new HashMap<>();
-        registry = new CollectorRegistry();
+        registry = CollectorRegistry.defaultRegistry;
     }
 
     private String[] getExtendedLabelNames(String... label_names) {
