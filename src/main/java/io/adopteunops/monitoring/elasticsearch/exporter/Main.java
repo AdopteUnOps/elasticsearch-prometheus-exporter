@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.adopteunops.monitoring.elasticsearh.exporter;
+package io.adopteunops.monitoring.elasticsearch.exporter;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
