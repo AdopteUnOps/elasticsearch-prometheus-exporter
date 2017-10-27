@@ -18,6 +18,7 @@ import com.beust.jcommander.Parameter;
 import io.prometheus.client.exporter.MetricsServlet;
 import org.compuscene.metrics.prometheus.PrometheusMetricsCollector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.elasticsearch.client.transport.TransportClient;
@@ -89,9 +90,12 @@ public class Main {
 
         public ExposePrometheusMetricsServer(int port, MetricsServlet metricsServlet) {
             this.server = new Server(port);
+            GzipHandler gzipHandler = new GzipHandler();
+            gzipHandler.setIncludedPaths("/*");
+            server.setHandler(gzipHandler);
             ServletContextHandler context = new ServletContextHandler();
             context.setContextPath("/");
-            server.setHandler(context);
+            gzipHandler.setHandler(context);
             context.addServlet(new ServletHolder(metricsServlet), "/metrics");
         }
 
