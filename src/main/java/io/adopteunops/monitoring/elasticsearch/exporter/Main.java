@@ -24,6 +24,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -63,13 +64,11 @@ public class Main {
         } else {
             Settings.Builder settingsBuilder = Settings.builder();
             settingsBuilder.put("cluster.name", main.clusterName);
-            if (main.username != null && main.username.trim().length() > 0) {
-                settingsBuilder.put("xpack.security.user", main.username + ":" + main.password);
-            }
-            TransportClient client = new PreBuiltTransportClient(settingsBuilder.build());
-            for (String elasticsearchHostname : main.elasticsearchHostnames) {
-                client = client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHostname), main.elasticsearchPort));
-            }
+            settingsBuilder.put("xpack.security.user", main.username + ":" + main.password);
+      			TransportClient client = new PreBuiltXPackTransportClient(settingsBuilder.build());
+      			for (String elasticsearchHostname : main.elasticsearchHostnames) {
+      				client = client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHostname), main.elasticsearchPort));
+      			}
 
             PrometheusMetricsCollector collector = new PrometheusMetricsCollector(Settings.EMPTY, client);
             new Timer().scheduleAtFixedRate(new TimerTask() {
