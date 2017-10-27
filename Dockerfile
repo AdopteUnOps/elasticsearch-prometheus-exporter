@@ -9,7 +9,7 @@ ENV SCRAPE_PERIOD 1
 ENV SCRAPE_PERIOD_UNIT MINUTES
 ENV PROMETHEUS_PORT 7979
 
-ADD startup /usr/bin/startup.sh
+ADD startup.sh /usr/bin/startup.sh
 
 ENTRYPOINT ["/usr/bin/startup.sh"]
 
