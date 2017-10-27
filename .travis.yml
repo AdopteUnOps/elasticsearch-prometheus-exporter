@@ -13,10 +13,6 @@ jdk:
 os:
   - linux
 
-branches:
-  only:
-    - master
-
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - mvn dockerfile:build
