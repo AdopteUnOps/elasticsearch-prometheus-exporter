@@ -275,7 +275,7 @@ public class PrometheusMetricsCollector {
             catalog.setGauge("indices_doc_deleted_number", idx.getDocs().getDeleted(), node);
 
             catalog.setGauge("indices_store_size_bytes", idx.getStore().getSizeInBytes(), node);
-            catalog.setCounter("indices_store_throttle_time_seconds", idx.getStore().getThrottleTime().millis() / 1000.0, node);
+            //catalog.setCounter("indices_store_throttle_time_seconds", idx.getStore().getThrottleTime().millis() / 1000.0, node);
 
             catalog.setCounter("indices_indexing_delete_count", idx.getIndexing().getTotal().getDeleteCount(), node);
             catalog.setGauge("indices_indexing_delete_current_number", idx.getIndexing().getTotal().getDeleteCurrent(), node);
@@ -509,12 +509,12 @@ public class PrometheusMetricsCollector {
         catalog.registerGauge("fs_total_total_bytes", "Total disk space for all mount points", "node");
         catalog.registerGauge("fs_total_available_bytes", "Available disk space for all mount points", "node");
         catalog.registerGauge("fs_total_free_bytes", "Free disk space for all mountpoints", "node");
-        catalog.registerGauge("fs_total_is_spinning_bool", "Is it a spinning disk ?", "node");
+        //catalog.registerGauge("fs_total_is_spinning_bool", "Is it a spinning disk ?", "node");
 
         catalog.registerGauge("fs_path_total_bytes", "Total disk space", "node", "path", "mount", "type");
         catalog.registerGauge("fs_path_available_bytes", "Available disk space", "node", "path", "mount", "type");
         catalog.registerGauge("fs_path_free_bytes", "Free disk space", "node", "path", "mount", "type");
-        catalog.registerGauge("fs_path_is_spinning_bool", "Is it a spinning disk ?", "node", "path", "mount", "type");
+        //catalog.registerGauge("fs_path_is_spinning_bool", "Is it a spinning disk ?", "node", "path", "mount", "type");
 
         catalog.registerGauge("fs_io_total_operations", "Total IO operations", "node");
         catalog.registerGauge("fs_io_total_read_operations", "Total IO read operations", "node");
@@ -528,8 +528,9 @@ public class PrometheusMetricsCollector {
             catalog.setGauge("fs_total_total_bytes", fs.getTotal().getTotal().getBytes(), node);
             catalog.setGauge("fs_total_available_bytes", fs.getTotal().getAvailable().getBytes(), node);
             catalog.setGauge("fs_total_free_bytes", fs.getTotal().getFree().getBytes(), node);
-            if (fs.getTotal() != null && fs.getTotal().getSpins() != null)
-                catalog.setGauge("fs_total_is_spinning_bool", fs.getTotal().getSpins() ? 1 : 0, node);
+
+            //if (fs.getTotal() != null && fs.getTotal().getSpins() != null)
+            //    catalog.setGauge("fs_total_is_spinning_bool", fs.getTotal().getSpins() ? 1 : 0, node);
 
             for (FsInfo.Path fspath : fs) {
                 String path = fspath.getPath();
@@ -538,8 +539,8 @@ public class PrometheusMetricsCollector {
                 catalog.setGauge("fs_path_total_bytes", fspath.getTotal().getBytes(), node, path, mount, type);
                 catalog.setGauge("fs_path_available_bytes", fspath.getAvailable().getBytes(), node, path, mount, type);
                 catalog.setGauge("fs_path_free_bytes", fspath.getFree().getBytes(), node, path, mount, type);
-                if (fspath.getSpins() != null)
-                    catalog.setGauge("fs_path_is_spinning_bool", fspath.getSpins() ? 1 : 0, node, path, mount, type);
+             //   if (fspath.getSpins() != null)
+             //       catalog.setGauge("fs_path_is_spinning_bool", fspath.getSpins() ? 1 : 0, node, path, mount, type);
             }
 
             FsInfo.IoStats ioStats = fs.getIoStats();
@@ -674,7 +675,7 @@ public class PrometheusMetricsCollector {
             catalog.setGauge("index_doc_deleted_number", idx.getDocs().getDeleted(), index_name);
 
             catalog.setGauge("index_store_size_bytes", idx.getStore().getSizeInBytes(), index_name);
-            catalog.setCounter("index_store_throttle_time_seconds", idx.getStore().getThrottleTime().millis() / 1000.0, index_name);
+            //catalog.setCounter("index_store_throttle_time_seconds", idx.getStore().getThrottleTime().millis() / 1000.0, index_name);
 
             catalog.setCounter("index_indexing_delete_count", idx.getIndexing().getTotal().getDeleteCount(), index_name);
             catalog.setGauge("index_indexing_delete_current_number", idx.getIndexing().getTotal().getDeleteCurrent(), index_name);

@@ -23,8 +23,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 
 import java.net.InetAddress;
@@ -68,7 +67,7 @@ public class Main {
             settingsBuilder.put("xpack.security.user", main.username + ":" + main.password);
       			TransportClient client = new PreBuiltXPackTransportClient(settingsBuilder.build());
       			for (String elasticsearchHostname : main.elasticsearchHostnames) {
-      				client = client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHostname), main.elasticsearchPort));
+      				client = client.addTransportAddress(new TransportAddress(InetAddress.getByName(elasticsearchHostname), main.elasticsearchPort));
       			}
 
             PrometheusMetricsCollector collector = new PrometheusMetricsCollector(Settings.EMPTY, client);
