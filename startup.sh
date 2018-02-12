@@ -3,7 +3,7 @@ set -e
 
 /usr/bin/java -jar /usr/share/prometheus-exporter/elasticsearch-exporter.jar \
   --elasticsearch-hosts ${ELASTICSEARCH_HOSTS} \
-  --elasticsearch-port ${ELASTICSERCH_PORT} \
+  --elasticsearch-port ${ELASTICSEARCH_PORT} \
   --elasticsearch-cluster ${ELASTICSEARCH_CLUSTER} \
   --elasticsearch-username ${ELASTICSEARCH_USERNAME} \
   --elasticsearch-password ${ELASTICSEARCH_PASSWORD} \
